@@ -1,16 +1,22 @@
-#include <iostream>
+#ifndef MAIN_H
+#define MAIN_H
+
 #include <iomanip>
-#include <string>
+#include "authenticationSystem.h"
 
 class interface
 {
 private:
     std::string allManagement[8] = {"Student Management", "Teacher Management", "Subject Management", "Grade Management",
                                    "Attendance", "Report", "Login System", "Exit"};
+    std::vector<std::string> activeAccount;
 public:
-   void headerTitle(void);
-   void optionPrint(void);
-   void chooseInput(void);
+    authenticationSystem authenticate;
+
+    void headerTitle(void);
+    void loginAccount (void);
+    void optionPrint(void);
+    //void chooseInput(void);
 };
 
 void interface::headerTitle(void) {
@@ -22,6 +28,30 @@ void interface::headerTitle(void) {
     std::cout << std::string(leftPad, '-') << header << std::string(rightPad, '-') << std::endl;
 }
 
+void interface::loginAccount(void) {
+    authenticate.userlogin();
+    activeAccount = authenticate.getLoggedAccount()[0];
+
+    if (activeAccount[1] == "ADMIN") {
+        std::cout << "hello admin"; 
+        return;
+    }
+
+    else if (activeAccount[1] == "TEACHER") {
+        std::cout << "hello teacher";
+        return;
+    }
+    else if (activeAccount[1] == "STAFF") {
+       std::cout << "hello staff";
+       return;
+    }
+
+    else {
+        std::cout << "hello student";
+        return;
+    } 
+}
+
 void interface::optionPrint(void) {
     for (std::string i:this->allManagement)
     {
@@ -30,7 +60,7 @@ void interface::optionPrint(void) {
     }
 }
 
-void interface::chooseInput(void) {
+/* void interface::chooseInput(void) {
     try {
         int choice;
         std::cout << "Enter: ";
@@ -55,4 +85,6 @@ void interface::chooseInput(void) {
     } catch (...) {
         std::cout << "Invalid input!" << std::endl;
     }
-}
+}*/
+
+#endif
