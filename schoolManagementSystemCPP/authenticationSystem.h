@@ -23,6 +23,7 @@ public:
     void userlogin(void);
     void getAccounts(void);
     std::vector<std::string> evaluate(std::string userName, std::string password);
+    std::string trim(std::string text);
 
     std::vector<std::vector<std::string>>& getLoggedAccount() { return loggedInAccount; }
 };
@@ -47,6 +48,7 @@ inline void authenticationSystem::userlogin(void)
 
 inline void authenticationSystem::getAccounts(void)
 {
+    this->accounts.clear();
     std::ifstream accounts("data/accounts.csv");
     if (!accounts.is_open()) {
         std::cerr << "error" << std::endl;
@@ -56,14 +58,18 @@ inline void authenticationSystem::getAccounts(void)
     std::string line;
     std::getline(accounts, line);
     while(getline(accounts, line)) {
-       std::stringstream sStream(line);
-       User accs;
+        std::stringstream sStream(line);
+        User accs;
 
-       std::getline(sStream, accs.username, ',');
-       std::getline(sStream, accs.password, ',');
-       std::getline(sStream, accs.role, ',');
+        std::getline(sStream, accs.username, ',');
+        std::getline(sStream, accs.password, ',');
+        std::getline(sStream, accs.role, ',');
 
-       this->accounts.push_back(accs);
+        accs.username = trim(accs.username);
+        accs.password = trim(accs.password);
+        accs.role     = trim(accs.role);
+
+        this->accounts.push_back(accs);
     }
     accounts.close();
     return;
@@ -79,6 +85,27 @@ inline std::vector<std::string> authenticationSystem::evaluate(std::string userN
         }
     }
     return resultAcc;
+}
+
+std::string authenticationSystem::trim(std::string text) {
+    std::string result = "";
+    bool started = false;
+    int lastChar = 0;
+
+    for (int i = text.size() - 1; i >= 0; i--) {
+        if (text[i] != ' ') {
+            lastChar = i;
+            break;
+        }
+    }
+
+    for (int i = 0; i <= lastChar; i++) {
+        if (text[i] != ' ' || started) {
+            result += text[i];
+            started = true;
+        }
+    }
+    return result;
 }
 
 #endif

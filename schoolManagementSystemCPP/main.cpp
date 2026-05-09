@@ -4,6 +4,7 @@
 using namespace std;
 
 int main() {
+    system("cls");
     interface interF;
     interF.headerTitle();
     interF.loginAccount();

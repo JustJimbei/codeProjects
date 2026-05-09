@@ -2,7 +2,11 @@
 #define MAIN_H
 
 #include <iomanip>
+#include <cstdlib>
+#include <chrono>
+#include <thread>
 #include "authenticationSystem.h"
+#include "studentManagement.h"
 
 class interface
 {
@@ -12,11 +16,11 @@ private:
     std::vector<std::string> activeAccount;
 public:
     authenticationSystem authenticate;
+    studentManagement studentManage;
 
     void headerTitle(void);
-    void loginAccount (void);
-    void optionPrint(void);
-    //void chooseInput(void);
+    void loginAccount(void);
+    void roleOptions(std::vector <std::string> role);
 };
 
 void interface::headerTitle(void) {
@@ -30,61 +34,36 @@ void interface::headerTitle(void) {
 
 void interface::loginAccount(void) {
     authenticate.userlogin();
+
+    if (authenticate.getLoggedAccount().empty()) {  
+        std::cerr << "Login failed" << std::endl;
+        return;
+    }
     activeAccount = authenticate.getLoggedAccount()[0];
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+    std::system("cls");
+    roleOptions(activeAccount);
+}
 
-    if (activeAccount[1] == "ADMIN") {
-        std::cout << "hello admin"; 
-        return;
+void interface::roleOptions(std::vector <std::string> role) {
+    std::cout << "Hello! " << role[0] << std::endl << std::endl;
+
+    if (role[1] == "ADMIN") {
+        studentManage.getStudentData();
+    } 
+    
+    else if (role[1] == "TEACHER") {
+        std::cout << "Teacher Menu" << std::endl;
     }
 
-    else if (activeAccount[1] == "TEACHER") {
-        std::cout << "hello teacher";
-        return;
-    }
-    else if (activeAccount[1] == "STAFF") {
-       std::cout << "hello staff";
-       return;
+    else if (role[1] == "STAFF") {
+        std::cout << "Staff Menu" << std::endl;
     }
 
     else {
-        std::cout << "hello student";
-        return;
-    } 
-}
-
-void interface::optionPrint(void) {
-    for (std::string i:this->allManagement)
-    {
-        static int count = 1;
-        std::cout << count++ << ". " << i << std::endl;
+        std::cout << "Student Menu" << std::endl;
     }
+    
 }
-
-/* void interface::chooseInput(void) {
-    try {
-        int choice;
-        std::cout << "Enter: ";
-        std::cin >> choice;
-
-        switch (choice)
-        {
-        case 1: break;
-        case 2: break;
-        case 3: break;
-        case 4: break;
-        case 5: break;
-        case 6: break;
-        case 7: break;
-        case 8: break;
-        default:
-            throw std::out_of_range("Invalid input!");
-        }
-         
-    } catch (std::out_of_range& e) {
-        std::cout << e.what() << std::endl;
-    } catch (...) {
-        std::cout << "Invalid input!" << std::endl;
-    }
-}*/
 
 #endif
